@@ -57,6 +57,7 @@ const removeItemFromWishlist = asyncHandler(async (req, res) => {
 const getWishlistItems = asyncHandler(async (req, res) => {
   try {
     const userId = parseInt(req.user.recordset[0].Id);
+    console.log(userID)
 
     const params = [
       { name: "userId", value: userId }
