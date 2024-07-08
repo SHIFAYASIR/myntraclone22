@@ -88,7 +88,7 @@ const updateUser = asyncHandler(async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
-
+// haider rizvi 
 // Delete User
 const deleteUser = asyncHandler(async (req, res) => {
     const { id } = req.params;
