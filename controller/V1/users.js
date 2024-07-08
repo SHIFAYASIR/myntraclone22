@@ -35,6 +35,8 @@ const register = asyncHandler(async (req, res) => {
         res.status(500).json(error);
       }
     });
+
+    
     const getAllusers = asyncHandler(async (req, res) => {
       try {
         const result = await sqlHelper.execute(`sp_GetAllUsers`);

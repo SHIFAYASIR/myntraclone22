@@ -12,7 +12,7 @@ const addItemToCart = asyncHandler(async (req, res) => {
     if (Quantity && ProductId && userId) {
       const params = [
         { name: "quantity", value: Quantity },
-        { name: "productId", value: ProductId },
+        { name: "productId", value: ProductId }, 
         { name: "userId", value: userId }
       ];
 
