@@ -20,6 +20,7 @@ const AddAdmin = asyncHandler(async (req, res) => {
       });
     }
   });
+  //practice
   
   
 // Login Admin
