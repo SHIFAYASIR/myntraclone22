@@ -20,6 +20,7 @@ const AddAdmin = asyncHandler(async (req, res) => {
       });
     }
   });
+  //practice
   
   
 // Login Admin
@@ -49,11 +50,15 @@ const getAllUsers = asyncHandler(async (req, res) => {
     }
 });
 
+
 //hello
 
 //hhhh
 
 //  conflict 1
+
+
+//conflict 2
 
 const getUserById = asyncHandler(async (req, res) => {
     try {
@@ -88,7 +93,7 @@ const updateUser = asyncHandler(async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
-// haider rizvi 
+
 // Delete User
 const deleteUser = asyncHandler(async (req, res) => {
     const { id } = req.params;
