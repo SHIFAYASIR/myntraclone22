@@ -48,9 +48,13 @@ const getAllUsers = asyncHandler(async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+<<<<<<< Updated upstream
 
 //hello
 
+=======
+// hello
+>>>>>>> Stashed changes
 
 const getUserById = asyncHandler(async (req, res) => {
     try {
