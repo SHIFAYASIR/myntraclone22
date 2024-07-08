@@ -154,6 +154,7 @@ const updateProduct = asyncHandler(async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+//delte the product
 
 // Delete Product
 const deleteProduct = asyncHandler(async (req, res) => {
