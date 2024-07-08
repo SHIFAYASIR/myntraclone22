@@ -46,7 +46,7 @@ const addProducts = asyncHandler(async (req, res) => {
       });
     }
 
-    const { name, description, price, stock, category, brand } = req.body;
+    const { name, description, price, stock, category, brand,imagePath } = req.body;
     const userId = parseInt(req.user.recordset[0].Id);
 
     // Check if the user is authorized
@@ -65,7 +65,8 @@ const addProducts = asyncHandler(async (req, res) => {
         { name: "stock", value: stock },
         { name: "category", value: category },
         { name: "brand", value: brand },
-        { name: "userId", value: userId }
+        { name: "userId", value: userId },
+        { name: 'productImage', value: imagePath }
       ];
 
       const result = await sqlHelper.execute('sp_CreateProduct', params);
