@@ -49,8 +49,8 @@ const getAllUsers = asyncHandler(async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
-
-
+// hello 
+//conflict 2
 const getUserById = asyncHandler(async (req, res) => {
     try {
       const result = await sqlHelper.execute(`sp_GetUserById`, [
@@ -84,7 +84,7 @@ const updateUser = asyncHandler(async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
-
+// my name is yasir
 // Delete User
 const deleteUser = asyncHandler(async (req, res) => {
     const { id } = req.params;
