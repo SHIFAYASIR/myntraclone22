@@ -40,7 +40,6 @@ const loginAdmin = asyncHandler(async (req, res) => {
     }
   });
 
-// Get All Users
 const getAllUsers = asyncHandler(async (req, res) => {
     try {
         const result = await sqlHelper.execute('sp_GetAllUsers');
@@ -51,14 +50,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
 });
 
 
-//hello
 
-//hhhh
-
-//  conflict 1
-
-
-//conflict 2
 
 const getUserById = asyncHandler(async (req, res) => {
     try {
@@ -155,6 +147,7 @@ const updateProduct = asyncHandler(async (req, res) => {
     }
 });
 //delte the product
+//asasdsad
 
 // Delete Product
 const deleteProduct = asyncHandler(async (req, res) => {

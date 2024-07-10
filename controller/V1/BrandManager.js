@@ -20,7 +20,7 @@ const registerProductManager = asyncHandler(async (req, res) => {
             { name: "password", value: password },
             { name: "firstName", value: firstName },
             { name: "lastName", value: lastName },
-            { name: "brandId", value: brandId }
+            { name: "BrandName", value: brandId }
         ];
 
         const result = await sqlHelper.execute('sp_RegisterProductManager', params);
