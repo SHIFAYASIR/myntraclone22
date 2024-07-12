@@ -1,14 +1,13 @@
 const express = require("express");
 const { protect } = require("../../middleware/auth.middleware.js");
-const userController = require("../../controller/V1/users.js");
+const userController = require("../../controller/V1/customer.js");
 const router = express.Router();
 
 
 
-router.route("/Login")
-.post(userController.login);
+
 router.route("/")
-.post( userController.register)
+.post( userController.registerCustomer)
 .put(userController.userUpdate)
 
 .get(userController.getAllusers);
@@ -17,6 +16,9 @@ router.route("/")
 router.route("/:id")
 .delete(userController.DeleteUser)
 .get(userController.getUserById);
+
+router.route("/Login")
+.post(userController.login);
 
 
 

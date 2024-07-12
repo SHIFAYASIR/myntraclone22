@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 const addItemToCart = asyncHandler(async (req, res) => {
   try {
     const { Quantity, ProductId } = req.body;
+    console.log(req.user)
     const userId = parseInt(req.user.recordset[0].Id);
 
     if (Quantity && ProductId && userId) {
@@ -29,7 +30,7 @@ const addItemToCart = asyncHandler(async (req, res) => {
       message: error.message,
     });
   }
-});
+});   
 
 // Get Cart Items
 const getCartItems = asyncHandler(async (req, res) => {

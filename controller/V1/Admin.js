@@ -6,11 +6,11 @@ const resultHelper = require("../../utils/result.helper");
 const bcrypt = require('bcryptjs');
 
 // Add Admin
-const AddAdmin = asyncHandler(async (req, res) => {
+const registerAdmin = asyncHandler(async (req, res) => {
     try {
       const newUser = sqlHelper.fetchParams(req.body);
       console.log(newUser)
-      const result = await sqlHelper.execute(`sp_AddAdmin`, newUser);
+      const result = await sqlHelper.execute(`[sp_registerAdmin]`, newUser);
       console.log(result)
       res.status(200).json({ message: result.recordset[0].msg });
     } catch (error) {
@@ -40,58 +40,62 @@ const loginAdmin = asyncHandler(async (req, res) => {
     }
   });
 
-// Get All Users
-const getAllUsers = asyncHandler(async (req, res) => {
-    try {
-        const result = await sqlHelper.execute('sp_GetAllUsers');
-        res.status(200).json(result.recordset);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+ 
+
+const getUserById = asyncHandler(async (req, res) => {
+  const userId = req.params.id;
+  console.log(userId)
+
+  if (userId==":id") {
+    return res.status(400).json({
+      message: "Please enter the ID of the user.",
+    });
+  }
+
+  try {
+    const result = await sqlHelper.execute(`sp_GetUserById`, [
+      { name: "id", value: userId },
+    ]);
+    console.log(result);
+    resultHelper.getStatusById(result, res);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
 });
 
 
-//hello
-
-//hhhh
-
-//  conflict 1
-
-
-//conflict 2
-
-const getUserById = asyncHandler(async (req, res) => {
-    try {
-      const result = await sqlHelper.execute(`sp_GetUserById`, [
-        { name: "id", value: req.params },
-      ]);
-      resultHelper.getStatusById(result, res);
-    } catch (error) {
-      res.status(500).json({
-        message: error,
-      });
-    }
-  });
 // Update User
 const updateUser = asyncHandler(async (req, res) => {
-    const { id, username, email, firstName, lastName, phone, address } = req.body;
-
-    try {
-        const params = [
-            { name: "id", value: id },
-            { name: "username", value: username },
-            { name: "email", value: email },
-            { name: "firstName", value: firstName },
-            { name: "lastName", value: lastName },
-            { name: "phone", value: phone },
-            { name: "address", value: address }
-        ];
-
-        const result = await sqlHelper.execute('sp_UpdateUser', params);
-        res.status(200).json({ message: result.recordset[0].msg });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+  const userId = req.user.recordset[0].id; 
+  const userIdInt = parseInt(userId);
+  const { username, email, firstName, lastName, phone, address } = req.body;
+  try {
+    if (userIdInt !== parseInt(req.body.id)) {
+      return res.status(403).json({ message: 'You do not have permission to update this profile.' });
     }
+
+    const params = [
+      { name: "id", value: userIdInt },
+      { name: "username", value: username },
+      { name: "email", value: email },
+      { name: "firstName", value: firstName },
+      { name: "lastName", value: lastName },
+      { name: "phone", value: phone },
+      { name: "address", value: address }
+    ];
+
+    // Execute the stored procedure to update the user
+    const result = await sqlHelper.execute('sp_UpdateUser', params);
+    
+
+    // Respond with a success message
+    res.status(200).json({ message: result.recordset[0].Message });
+  } catch (error) {
+    // Handle errors and respond with an error message
+    res.status(500).json({ message: error.message });
+  }
 });
 
 // Delete User
@@ -100,37 +104,20 @@ const deleteUser = asyncHandler(async (req, res) => {
 
     try {
         const params = [{ name: "id", value: id }];
+       
 
-        const result = await sqlHelper.execute('sp_DeleteUser', params);
-        res.status(200).json({ message: result.recordset[0].msg });
+        const result = await sqlHelper.execute('[sp_deleteUser]', params);
+        
+        res.status(200).json({ message: result.recordset[0].MSG });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 });
 
-// Get All Products
-const getAllProducts = asyncHandler(async (req, res) => {
-    try {
-        const result = await sqlHelper.execute('sp_GetAllProducts');
-        res.status(200).json(result.recordset);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
+
 
 // Get Product By ID
-const getProductById = asyncHandler(async (req, res) => {
-    const { id } = req.params;
 
-    try {
-        const params = [{ name: "id", value: id }];
-
-        const result = await sqlHelper.execute('sp_GetProductById', params);
-        res.status(200).json(result.recordset[0]);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
 
 // Update Product
 const updateProduct = asyncHandler(async (req, res) => {
@@ -155,6 +142,7 @@ const updateProduct = asyncHandler(async (req, res) => {
     }
 });
 //delte the product
+//asasdsad
 
 // Delete Product
 const deleteProduct = asyncHandler(async (req, res) => {
@@ -171,13 +159,12 @@ const deleteProduct = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-    AddAdmin,
+ 
     loginAdmin,
     getAllUsers,
     getUserById,
     updateUser,
     deleteUser,
-    getAllProducts,
     getProductById,
     updateProduct,
     deleteProduct
