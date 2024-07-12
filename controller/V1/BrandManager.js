@@ -5,30 +5,12 @@ const error = require("../../middleware/auth.middleware");
 const resultHelper = require("../../utils/result.helper");
 const bcrypt = require('bcryptjs');
 
+// Get All BrandManager 
 
 
 
 
 // Register Product Manager
-const registerProductManager = asyncHandler(async (req, res) => {
-    try {
-        const { username, email, password, firstName, lastName, brandId } = req.body;
-
-        const params = [
-            { name: "username", value: username },
-            { name: "email", value: email },
-            { name: "password", value: password },
-            { name: "firstName", value: firstName },
-            { name: "lastName", value: lastName },
-            { name: "BrandName", value: brandId }
-        ];
-
-        const result = await sqlHelper.execute('sp_RegisterProductManager', params);
-        res.status(201).json({ message: "Product Manager registered successfully", data: result.recordset });
-    } catch (error) {
-        res.status(500).json({ message: "Failed to register product manager.", error: error.message });
-    }
-});
 
 // Login Product Manager
 const loginProductManager = asyncHandler(async (req, res) => {
@@ -53,26 +35,7 @@ const loginProductManager = asyncHandler(async (req, res) => {
 });
 
 // Update Product Manager
-const updateProductManager = asyncHandler(async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { username, email, firstName, lastName, brandId } = req.body;
 
-        const params = [
-            { name: "id", value: id },
-            { name: "username", value: username },
-            { name: "email", value: email },
-            { name: "firstName", value: firstName },
-            { name: "lastName", value: lastName },
-            { name: "brandId", value: brandId }
-        ];
-
-        const result = await sqlHelper.execute('sp_UpdateProductManager', params);
-        res.status(200).json({ message: "Product Manager updated successfully", data: result.recordset });
-    } catch (error) {
-        res.status(500).json({ message: "Failed to update product manager.", error: error.message });
-    }
-});
 
 // Delete Product Manager
 const deleteProductManager = asyncHandler(async (req, res) => {
@@ -91,7 +54,7 @@ const deleteProductManager = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-    registerProductManager,
+  
     loginProductManager,
     updateProductManager,
     deleteProductManager

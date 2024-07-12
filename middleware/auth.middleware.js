@@ -5,7 +5,6 @@ const slqHelper = require('../utils/sql.helper');
 
 
 
-
 const protect = asyncHandler(async (req, res, next) => {
   let token;
 
@@ -16,14 +15,18 @@ const protect = asyncHandler(async (req, res, next) => {
     try {
       token = req.headers.authorization.split(' ')[1];
 
+
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      req.user = await slqHelper.execute(`sp_UserById`, [
+
+     let res = await slqHelper.execute(`sp_UserById`, [
         {
-          name: 'ID',
+          name: 'id',
           value: parseInt(decoded.id),
         },
       ]);
+
+      req.user =  res.recordset[0];
 
       next();
     } catch (error) {
@@ -39,8 +42,18 @@ const protect = asyncHandler(async (req, res, next) => {
   }
 });
 
-const admin = (req, res, next) => {
-  if (req.user && req.user.isAdmin) {
+
+/**
+ * Middleware function to check if the user is authorized as an admin.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function.
+ * @throws {Error} If the user is not authorized as an admin.
+ */
+const isAdmin = (req, res, next) => {
+  console.log("user",req.user)
+  if (req.user && req.user.userType == 1) {
     next();
   } else {
     res.status(401);
@@ -48,4 +61,23 @@ const admin = (req, res, next) => {
   }
 };
 
-module.exports = { protect, admin };
+/**
+ * Middleware function to check if the user is authorized as a brand manager.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function.
+ * @throws {Error} If the user is not authorized as a brand manager.
+ */
+const isBrandManager = (req, res, next) => {
+  console.log("user",req.user)
+  if (req.user && req.user.userType == 3) {
+    next();
+  } else {
+    
+    res.status(401);
+    throw new Error('Not authorized as an admin');
+  }
+};
+
+module.exports = { protect, isAdmin,isBrandManager };

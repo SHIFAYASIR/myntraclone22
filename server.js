@@ -9,14 +9,16 @@ const mssql = require("./utils/sql.helper.js");
 const { notFound, errorHandler } = require("./middleware/error.middleware.js");
 
 // user define routes
-const usersRoutes= require("./routes/V1/users.routes.js");
-const uploadRoutes = require("../job portal/routes/V1/upload.routes.js");
+// const usersRoutes= require("./routes/V1/customer.routes.js");
+const uploadRoutes = require("../mayntraclone/routes/V1/upload.routes.js");
 const productRoutes = require("../mayntraclone/routes/V1/product.routes.js")
 const orderRoutes = require("./routes/V1/order.routes.js")
 const cartRoutes = require("./routes/V1/cart.routes.js")
 const wishlistRoutes = require("./routes/V1/widhlist.routes.js")
-const adminRoutes  = require("./routes/V1/admin.routes.js")
-const productManagerRoutes = require("./routes/V1/productManager.routes.js")
+// const adminRoutes  = require("./routes/V1/admin.routes.js")
+// const BrandManagerRoutes = require("./routes/V1/BrandManager.route.js")
+const userRoutes = require("./routes/V1/user.routes.js")
+
 
 
 dotenv.config();
@@ -34,13 +36,14 @@ app.use("/uploads", express.static("/uploads"));
 
 // user define routes
 app.use("/api/upload", uploadRoutes)
-app.use("/api/users", usersRoutes)
+// app.use("/api/customer", usersRoutes)
 app.use("/api/products",productRoutes)
 app.use("/api/order",orderRoutes)
 app.use("/api/cart",cartRoutes)
 app.use("/api/wishlist",wishlistRoutes)
-app.use("/api/admin",adminRoutes)
-app.use("/api/productManager",productManagerRoutes)
+// app.use("/api/admin",adminRoutes)
+// app.use("/api/BrandManager",BrandManagerRoutes)
+app.use("/api/User",userRoutes)
 
 
 

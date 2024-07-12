@@ -7,18 +7,7 @@ const bcrypt = require('bcryptjs');
 
 
 
-const register = asyncHandler(async (req, res) => {
-    try {
-      const newUser = sqlHelper.fetchParams(req.body);
-      const result = await sqlHelper.execute(`[sp_RegisterUser]`, Object.values(newUser));
-      resultHelper.createStatus(result, res);
-    } catch (error) {
-      res.status(500).json({
-        message: "Failed to register user.",
-        error: error.message
-      });
-    }
-  });
+
   
   // Login User
   const login = asyncHandler(async (req, res) => {
@@ -122,7 +111,7 @@ const DeleteUser = asyncHandler(async (req, res) => {
     
 
     module.exports = {
-        register,
+      
         login,
         getAllusers,
         getUserById,
