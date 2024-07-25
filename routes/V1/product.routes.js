@@ -1,19 +1,19 @@
 const express = require("express");
-const { protect } = require("../../middleware/auth.middleware.js");
+const { protect, isAdmin, isBrandManager, isAdminOrBrandManager } = require("../../middleware/auth.middleware.js");
 const productController = require("../../controller/V1/products.js");
 const router = express.Router();
 
 
 
 router.route("/")
-.post( productController.addProducts)
-.put(productController.productUpdate)
-.get(productController.getAllproducts);
+.post(protect,isAdminOrBrandManager,productController.addProduct)
+.put(protect,isAdminOrBrandManager,productController.updateProduct)
+.get(protect,isAdminOrBrandManager,productController.getAllProducts);
 
 
 router.route("/:id")
-.delete(productController.Deleteproduct)
-.get(productController.getproductById);
+.delete(protect,isAdmin,isBrandManager,productController.deleteProduct)
+.get(protect,isAdmin,isBrandManager,productController.getProductById);
 
 
 

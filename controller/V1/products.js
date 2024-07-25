@@ -1,181 +1,137 @@
 const asyncHandler = require("express-async-handler");
 const sqlHelper = require("../../utils/sql.helper");
-const generateToken = require("../../utils/generateToken.helper");
-const error = require("../../middleware/auth.middleware");
 const resultHelper = require("../../utils/result.helper");
-const multer = require('multer');
-const path = require('path');
 
+// Add Product
+const addProduct = asyncHandler(async (req, res) => {
+  try {
+    console.log(req.user.id)
+    const userId = parseInt(req.user.id);
+    
+    const { name, description, thumnailImage, mrp, extraImages, sellingPrice, brandName,CategoryId,stock } = req.body; 
 
+    console.log(req.body)
+     //const images = req.files.extname(file => file.filename);
+    const params = [
+      { name: "userId", value: userId },
+      { name: "name", value: name },
+      { name: "description", value: description },
+      { name: "thumnailImage", value: thumnailImage },
+      { name: "extraImages", value: extraImages },
+      { name: "mrp", value: mrp },
+      { name: "sellingPrice", value: sellingPrice },
+      { name: "CategoryId", value: CategoryId },
+      { name: "brandName", value: brandName },
+      { name: "stock", value: stock },
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/');
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    ];
+    console.log("dwdbwdjb",params)
+
+    const result = await sqlHelper.execute(`sp_AddProductWithImage`, params);
+    resultHelper.createStatus(result, res);
+    res.status(200).json({ message: result.recordset[0].msg });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to add product.",
+      error: error.message,
+    });
   }
 });
 
-const upload = multer({ storage: storage });
+// Update Product
+const updateProduct = asyncHandler(async (req, res) => {
+  const userType = req.user.userType
+  const { id,name,
+     description, thumnailImage, extraImages, status, MRP, sellingPrice, categoryId, stock } = req.body;
 
-const uploadProductImage = (req, res) => {
   try {
-    const file = req.file;
-    if (!file) {
-      return res.status(400).json({ message: 'No file uploaded' });
-    }
+    const params = [
+      { name: 'userType', value: userType },
+      { name: 'id', value: id },
+      { name: 'name', value: name },
+      { name: 'description', value: description },
+      { name: 'thumnailImage', value: thumnailImage },
+      { name: 'extraImages', value: extraImages },
+      { name: 'status', value: status },
+      { name: 'MRP', value: MRP },
+      { name: 'sellingPrice', value: sellingPrice },
+      { name: 'categoryId', value: categoryId },
+      { name: 'stock', value: stock }
+    ];
 
-    const filePath = req.file.path;
-    res.status(200).json({ message: 'File uploaded successfully', filePath });
+    const result = await sqlHelper.execute('sp_UpdateProduct', params);
+    resultHelper.mutationStatus(result, res);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-};
-
-
-
-
-const addProducts = asyncHandler(async (req, res) => {
-  try {
-    // Check if user is authenticated and has a valid recordset
-    if (!req.user || !req.user.recordset || !req.user.recordset[0]) {
-      return res.status(401).json({
-        message: "User not authenticated",
-      });
-    }
-
-    const { name, description, price, stock, category, brand,imagePath } = req.body;
-    const userId = parseInt(req.user.recordset[0].Id);
-
-    // Check if the user is authorized
-    if (userId !== 11) {
-      return res.status(403).json({
-        message: "You are not authorized to add a product",
-      });
-    }
-
-    // Proper parameter validation
-    if (name && description && price && stock && category && brand) {
-      const params = [
-        { name: "name", value: name },
-        { name: "description", value: description },
-        { name: "price", value: price },
-        { name: "stock", value: stock },
-        { name: "category", value: category },
-        { name: "brand", value: brand },
-        { name: "userId", value: userId },
-        { name: 'productImage', value: imagePath }
-      ];
-
-      const result = await sqlHelper.execute('sp_CreateProduct', params);
-      res.status(200).json({ message: result.recordset[0].msg });
-    } else {
-      res.status(400).json({
-        message: "All fields are required",
-      });
-    }
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
-  }
 });
 
- 
-    
-    const getproductById = asyncHandler(async (req, res) => {
-      try {
-        const result = await sqlHelper.execute(`sp_GetProductById`, [
-          { name: "ID", value: req.params.id },
-        ]);
-        resultHelper.getStatusById(result, res);
-      } catch (error) {
-        res.status(500).json({
-          message: error,
-        });    
+// Delete Product
+const deleteProduct = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { brandId } = req.user; // Assuming req.user contains user information
+
+  try {
+    const params = [{ name: "id", value: id }];
+
+    // Check brand manager's authorization
+    if (req.user.userType === "brandManager") {
+      const product = await sqlHelper.execute(`[sp_GetProductById]`, params);
+      if (product.recordset[0].brandId !== brandId) {
+        return res.status(403).json({ message: "Not authorized to delete this product." });
       }
-    });
- 
-const productUpdate = asyncHandler(async (req, res) => {
-  try {
-    const { ID, name, description, price, stock, category, brand} = req.body;
-
-    // Ensure a productId is provided for the update operation
-    if (!ID) {
-      return res.status(404).json({
-        message: "product ID is required for updating."
-      });
     }
+
+    const result = await sqlHelper.execute(`[sp_DeleteProduct]`, params);
+    resultHelper.mutationStatus(result, res);
+    res.status(200).json({ message: result.recordset[0].msg });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to delete product.",
+      error: error.message,
+    });
+  }
+});
+
+// Get All Products (Public)
+const getAllProducts = asyncHandler(async (req, res) => {
+  const { id, userType } = req.user; // Assuming user info is in req.user
+console.log(id,userType)
+  try {
     const params = [
-      { name: "Id", value: ID },
-      { name: "name", value: name },
-      { name: "description", value: description },
-      { name: "price", value: price },
-      { name: "stock", value: stock },
-      { name: "category", value: category },
-      { name: "brand", value: brand }
-      
+      { name: 'userId', value: id },
+      { name: 'userType', value: userType }
     ];
-
-    const result = await sqlHelper.execute("[sp_UpdateProduct]", params);
-    res.status(200).json({ message: result.recordset[0].MSG });
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
-  }
-});
-
-const Deleteproduct = asyncHandler(async (req, res) => {
-  const reqId = parseInt(req.params.id);
-  try {
-    const result = await sqlHelper.execute(`[dbo].[sp_GetProductById]`, [
-      { name: "id", value: reqId },
-    ]);       
-
-
-    let product = result.recordset.length ? result.recordset[0] : null;
-    if (product) {
-      const result = await sqlHelper.execute(`[dbo].[sp_DeleteProduct]`, [
-        {
-          name: "id",
-          value: reqId,
-        },
-      ]);
-      console.log("delete result",result)
-      res.status(200).json({message:result.recordset[0].MSG});
-    } else {
-      res.status(404).json({
-        message: "Record not found",
-      });
-    }
-  } catch (error) {
-    res.status(500).json({
-      message: error,
-    });
-  }
-});
-const getAllproducts = asyncHandler(async (req, res) => {
-    try {
-      const result = await sqlHelper.execute(`[sp_GetProducts]`);
-      resultHelper.getStatus(result, res);
-    } catch (error) {
-      res.status(500).json(error);
-    }
-  });
-  
-
+    console.log(params)
     
+    const result = await sqlHelper.execute('sp_GetProducts', params);
+    res.status(200).json(result.recordset);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
-    module.exports = {
-        addProducts,
-        getAllproducts,
-        getproductById,
-        productUpdate,
-        Deleteproduct,
-        upload,
-        uploadProductImage
-       
-      };  
+// Get Product by ID
+const getProductById = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id || isNaN(id)) {
+    return res.status(400).json({ message: "Please mention the product ID." });
+  }
+
+  try {
+    const params = [{ name: "id", value: id }];
+    const result = await sqlHelper.execute('[sp_GetProductById]', params);
+    resultHelper.getStatusById(result, res);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+module.exports = {
+  addProduct,
+  updateProduct,
+  deleteProduct,
+  getAllProducts,
+  getProductById,
+};
