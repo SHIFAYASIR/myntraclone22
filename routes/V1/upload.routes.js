@@ -29,13 +29,16 @@ function checkFileType(file, cb) {
 
 const upload = multer({
   storage,
-  fileFilter: function (req, file, cb) {
+  fileFilter: (req, file, cb) => {
     checkFileType(file, cb);
   },
 });
 
 router.post('/', upload.single('image'), (req, res) => {
-  res.send(`${req.file.path}`);
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file uploaded' });
+  }
+  res.json({ path: req.file.path });
 });
 
 module.exports = router;

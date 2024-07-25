@@ -14,7 +14,11 @@ router.route("/Admin")
 router.route("/BrandManager")
 
 .post(userController.AddBrandManager)
-.get(protect,isAdmin,userController.GetAllBrandManagers)
+.get(protect,isAdmin,userController.GetAllBrandManagers);
+
+router.route("/BrandManager/:id")
+
+.put(protect, isAdmin, userController.approveBrandManager);
 
 router.route("/customer")
 .post(userController.AddCustomer)
@@ -23,6 +27,7 @@ router.route("/:id")
 // .delete(protect,Admin.deleteUser)
 .get(protect,isAdmin,userController.getById)
 .put(protect,isAdmin, userController.updateUserProfile);
+
 
 
 

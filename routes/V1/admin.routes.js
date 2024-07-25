@@ -22,7 +22,7 @@ router.route("/getBrandManger")
 .get([protect,admin],BrandManager.getAll)
 
 
-
+=
 // router.route("/:id")
 // .delete(protect,Admin.deleteProduct)
 // .get(protect,Admin.getProductById);

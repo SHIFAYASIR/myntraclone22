@@ -4,14 +4,14 @@ const dotenv = require("dotenv");
 const morgan = require("morgan");
 const colors = require("colors");
 const mssql = require("./utils/sql.helper.js");
-
+const cors = require("cors");
 // middleware
 const { notFound, errorHandler } = require("./middleware/error.middleware.js");
 
 // user define routes
 // const usersRoutes= require("./routes/V1/customer.routes.js");
-const uploadRoutes = require("../mayntraclone/routes/V1/upload.routes.js");
-const productRoutes = require("../mayntraclone/routes/V1/product.routes.js")
+const uploadRoutes = require("./routes/V1/upload.routes.js");
+const productRoutes = require("./routes/V1/product.routes.js")
 const orderRoutes = require("./routes/V1/order.routes.js")
 const cartRoutes = require("./routes/V1/cart.routes.js")
 const wishlistRoutes = require("./routes/V1/widhlist.routes.js")
@@ -28,6 +28,11 @@ mssql.connect();
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 app.use(express.json());
 // const __dirname3 = path.resolve();
