@@ -14,7 +14,7 @@ const protect = asyncHandler(async (req, res, next) => {
   ) {
     try {
       token = req.headers.authorization.split(' ')[1];
-
+       console.log("token", token)
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
@@ -25,7 +25,7 @@ const protect = asyncHandler(async (req, res, next) => {
           value: parseInt(decoded.id),
         },
       ]);
-
+      console.log(res);
       req.user =  res.recordset[0];
 
       next();

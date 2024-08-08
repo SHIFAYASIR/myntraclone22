@@ -5,7 +5,7 @@ const router = express.Router();
 
 
 router.route("/")
-.get(protect,isAdmin,BrandManager.getAll)
+.get(protect,isAdmin,BrandManager.gtAll)
 .post(BrandManager.registerBrandManager)
 .put(protect,BrandManager.updateProductManager);
 

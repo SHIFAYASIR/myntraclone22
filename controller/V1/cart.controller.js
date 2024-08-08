@@ -8,6 +8,7 @@ const addItemToCart = asyncHandler(async (req, res) => {
   try {
     const { Quantity, ProductId } = req.body;
     console.log(req.user)
+    console.log("addd ityem") 
     const userId = parseInt(req.user.recordset[0].Id);
 
     if (Quantity && ProductId && userId) {
@@ -76,8 +77,8 @@ const removeCartItem = asyncHandler(async (req, res) => {
 
 
 // Update Cart Item Quantity ---  @UserId INT,
-  // @ProductId INT,
-   // @Quantity INT
+//   @ProductId INT,
+//    @Quantity INT
 const updateCartItemQuantity = asyncHandler(async (req, res) => {
   console.log(req.body)
   try {
