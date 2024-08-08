@@ -8,12 +8,13 @@ const router = express.Router();
 router.route("/")
 .post(protect,isAdminOrBrandManager,productController.addProduct)
 .put(protect,isAdminOrBrandManager,productController.updateProduct)
-.get(protect,isAdminOrBrandManager,productController.getAllProducts);
+.get(protect,productController.getAllProducts);
+
 
 
 router.route("/:id")
-.delete(protect,isAdmin,isBrandManager,productController.deleteProduct)
-.get(protect,isAdmin,isBrandManager,productController.getProductById);
+.delete(protect,isAdminOrBrandManager,productController.deleteProduct)
+.get(protect,isAdminOrBrandManager,productController.getProductById);
 
 
 

@@ -5,6 +5,7 @@ const morgan = require("morgan");
 const colors = require("colors");
 const mssql = require("./utils/sql.helper.js");
 const cors = require("cors");
+const Razorpay = require('razorpay');
 // middleware
 const { notFound, errorHandler } = require("./middleware/error.middleware.js");
 
@@ -18,6 +19,7 @@ const wishlistRoutes = require("./routes/V1/widhlist.routes.js")
 // const adminRoutes  = require("./routes/V1/admin.routes.js")
 // const BrandManagerRoutes = require("./routes/V1/BrandManager.route.js")
 const userRoutes = require("./routes/V1/user.routes.js")
+const paymentRoutes = require("./routes/V1/paymentRoutes.js")
 
 
 
@@ -25,7 +27,7 @@ dotenv.config();
 
 const app = express();
 mssql.connect();
-if (process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV === "DEVELOPMENT") {
   app.use(morgan("dev"));
 }
 app.use(
@@ -49,6 +51,8 @@ app.use("/api/wishlist",wishlistRoutes)
 // app.use("/api/admin",adminRoutes)
 // app.use("/api/BrandManager",BrandManagerRoutes)
 app.use("/api/User",userRoutes)
+app.use("/api/payment",paymentRoutes)
+
 
 
 
@@ -59,8 +63,11 @@ app.get("/", (req, res) => {
 
 
 
+
 app.use(notFound);
 app.use(errorHandler);
+
+
 
 const PORT = process.env.PORT || 3001;
 
